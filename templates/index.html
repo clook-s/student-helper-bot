@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Умный помошник для студентов</title>
+{% endblock %}
+
+{% block body %}
+<script>
+async function sendMessage() {
+    const input = document.getElementById('user-input');
+    const chatBox = document.getElementById('chat-box');
+    const text = input.value.trim();
+    
+    if (!text) return;
+    
+    // 1. Показываем сообщение пользователя
+    const userMsg = document.createElement('div');
+    userMsg.className = 'message user';
+    userMsg.textContent = text;
+    chatBox.appendChild(userMsg);
+    
+    // 2. Очищаем поле ввода
+    input.value = '';
+    
+    // 3. Отправляем запрос на Flask
+    const response = await fetch('/ask', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: text})
+    });
+    
+    const data = await response.json();
+    
+    // 4. Показываем ответ бота
+    const botMsg = document.createElement('div');
+    botMsg.className = 'message bot';
+    botMsg.textContent = data.answer;
+    chatBox.appendChild(botMsg);
+    
+    // 5. Прокручиваем вниз
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
+
+
+<div>
+    <h1>Хелпер бот</h1>
+</div>
+<div class="input-area">
+    <input type="text" id="user-input" placeholder="Введите вопрос...">
+    <button onclick="sendMessage()">Отправить</button>
+</div>
+<div id="chat-box" class="chat-box">
+    <!-- Сюда будут падать сообщения -->
+</div>
+{% endblock %}
+
