@@ -17,8 +17,13 @@ def index():
 def ask():
     data = request.get_json()
     user_message = data.get('message', '')
-    
-    with GigaChat(credentials=CREDENTIALS, verify_ssl_certs=False, model="GigaChat") as giga:
+
+    with GigaChat(
+        credentials=CREDENTIALS,
+        verify_ssl_certs=False,
+        model="GigaChat-2",
+        scope="GIGACHAT_API_PERS"
+    ) as giga:
         response = giga.chat(
             Chat(
                 messages=[
@@ -27,8 +32,9 @@ def ask():
             )
         )
         answer = response.choices[0].message.content
-    
+
     return jsonify({'answer': answer})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
